@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRUTAL GRAPH</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: #050000;
+    color: red;
+    font-family: Arial, sans-serif;
+    transition: background .3s;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse, #310000, #100000 50%, #000);
+    z-index: -3;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    opacity: .15;
+    background: repeating-linear-gradient(
+        0deg, transparent 0px, transparent 3px, red 4px
+    );
+    animation: scan .15s infinite;
+}
+
+@keyframes scan {
+    to { transform: translateY(4px); }
+}
+
+/* BACKGROUND */
+
+.background {
+    position: fixed;
+    inset: -150px;
+    z-index: -1;
+    transform: rotate(-25deg) scale(1.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 35px;
+    pointer-events: none;
+    animation: backgroundMove 4s infinite alternate;
+}
+
+.background-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 45px;
+    white-space: nowrap;
+}
+
+.background span {
+    color: rgba(255, 0, 0, .17);
+    font-size: 42px;
+    font-weight: 1000;
+    text-shadow: 0 0 15px red;
+    animation: wordGlitch 1.5s infinite alternate;
+}
+
+@keyframes backgroundMove {
+    from { transform: rotate(-25deg) scale(1.3) translate(-10px, 5px); }
+    to { transform: rotate(-22deg) scale(1.35) translate(10px, -10px); }
+}
+
+@keyframes wordGlitch {
+    0% { opacity: .08; transform: skewX(-5deg); }
+    50% { opacity: .25; transform: skewX(5deg); }
+    100% { opacity: .12; transform: skewX(-3deg); }
+}
+
+/* INTRO */
+
+.intro {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, .92);
+    animation: introExit 1s ease forwards;
+    animation-delay: 9s;
+}
+
+.scene {
+    width: min(90%, 500px);
+    text-align: center;
+}
+
+.scene-title {
+    color: #850000;
+    font-size: 12px;
+    letter-spacing: 5px;
+    margin-bottom: 40px;
+    animation: flicker 2s infinite;
+}
+
+.characters {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.character {
+    font-size: 65px;
+    filter: drop-shadow(0 0 12px red);
+}
+
+.boy { animation: boyMove 2s ease-in-out infinite alternate; }
+.girl { animation: girlMove 2.5s ease-in-out infinite alternate; }
+
+@keyframes boyMove {
+    from { transform: translateY(0) rotate(-3deg); }
+    to { transform: translateY(-8px) rotate(3deg); }
+}
+
+@keyframes girlMove {
+    from { transform: translateY(-4px) rotate(2deg); }
+    to { transform: translateY(5px) rotate(-2deg); }
+}
+
+.dialogue {
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.speech {
+    max-width: 95%;
+    padding: 14px 18px;
+    border: 1px solid #690000;
+    background: #160000;
+    color: #ff3333;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 0 15px #500000;
+    opacity: 0;
+}
+
+.boy-speech {
+    animation: showBoy 2.5s forwards;
+    animation-delay: 1s;
+}
+
+.girl-speech {
+    animation: showGirl 3s forwards;
+    animation-delay: 4s;
+}
+
+@keyframes showBoy {
+    0% { opacity: 0; transform: translateX(-30px); }
+    15%, 80% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; }
+}
+
+@keyframes showGirl {
+    0% { opacity: 0; transform: translateX(30px); }
+    15%, 85% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; }
+}
+
+@keyframes introExit {
+    to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+/* GRAPH */
+
+.container {
+    width: min(100%, 430px);
+    padding: 25px 15px 40px;
+    margin: auto;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: graphAppear 1.5s ease forwards;
+    animation-delay: 9.5s;
+}
+
+@keyframes graphAppear {
+    from { opacity: 0; transform: scale(.8); filter: blur(15px); }
+    to { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+h1 {
+    text-align: center;
+    font-size: 34px;
+    color: #ff1010;
+    letter-spacing: 5px;
+    text-shadow: 0 0 5px red, 0 0 15px red, 0 0 35px red;
+    animation: titleGlitch 2s infinite;
+}
+
+.subtitle {
+    text-align: center;
+    color: red;
+    font-size: 11px;
+    font-weight: 1000;
+    letter-spacing: 3px;
+    line-height: 1.8;
+    margin-bottom: 25px;
+    text-shadow: 0 0 5px red, 0 0 15px darkred, 0 0 30px red;
+    animation: creepyText 2s infinite;
+}
+
+@keyframes titleGlitch {
+    0%, 90%, 100% { transform: translate(0); }
+    91% { transform: translate(-3px, 2px); }
+    93% { transform: translate(3px, -2px); }
+    95% { transform: translate(-2px, 1px); }
+}
+
+@keyframes creepyText {
+    0%, 100% { opacity: 1; transform: skewX(0deg); }
+    45% { opacity: .5; transform: skewX(-3deg); }
+    50% { opacity: .9; transform: skewX(3deg); }
+}
+
+.graph-wrapper {
+    background: rgba(10, 0, 0, .8);
+    border: 1px solid #690000;
+    box-shadow: 0 0 15px #600000, inset 0 0 30px #260000;
+    padding: 10px 5px;
+    cursor: pointer;
+    position: relative;
+    transition: .3s;
+    animation: boxPulse 3s infinite alternate;
+}
+
+.graph-wrapper:hover {
+    border-color: red;
+    box-shadow: 0 0 30px red, inset 0 0 35px #400000;
+}
+
+@keyframes boxPulse {
+    from { box-shadow: 0 0 10px #400000, inset 0 0 15px #200000; }
+    to { box-shadow: 0 0 30px #a00000, inset 0 0 35px #400000; }
+}
+
+svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    animation: graphWobble 3s infinite ease-in-out;
+    transform-origin: center;
+}
+
+@keyframes graphWobble {
+    0%, 100% { transform: rotate(-.7deg) skewX(-.5deg); }
+    25% { transform: rotate(.8deg) skewX(.7deg); }
+    50% { transform: rotate(-1deg) skewX(1deg); }
+    75% { transform: rotate(.6deg) skewX(-.8deg); }
+}
+
+line {
+    stroke: #ff1616;
+    stroke-width: 1.6;
+    stroke-dasharray: 5 4;
+    marker-end: url(#arrow);
+    filter: drop-shadow(0 0 4px red);
+    animation: arrowPulse 1.2s infinite alternate;
+    transition: y2 0.5s ease-in-out;
+}
+
+@keyframes arrowPulse {
+    from { opacity: .25; stroke-width: 1; }
+    to { opacity: 1; stroke-width: 2.3; }
+}
+
+.people {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: individualMove 3s ease-in-out infinite alternate;
+}
+
+@keyframes individualMove {
+    0% {
+        transform: translateY(calc(var(--distance) * -1))
+                   rotate(calc(var(--rotation) * -1));
+    }
+    50% {
+        transform: translateY(var(--distance))
+                   rotate(var(--rotation));
+    }
+    100% {
+        transform: translateY(calc(var(--distance) * -1))
+                   rotate(calc(var(--rotation) * -1));
+    }
+}
+
+.legend {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+.women-label {
+    color: #ff368d;
+    text-shadow: 0 0 10px #ff0066;
+}
+
+.men-label {
+    color: #00bfff;
+    text-shadow: 0 0 10px #008cff;
+}
+
+.warning {
+    text-align: center;
+    color: #750000;
+    font-size: 10px;
+    letter-spacing: 4px;
+    margin-top: 25px;
+    animation: flicker 1.5s infinite;
+}
+
+@keyframes flicker {
+    0%, 19%, 21%, 63%, 65%, 100% { opacity: 1; }
+    20%, 64% { opacity: .25; }
+}
+
+/* CLICK EFFECT */
+
+.click-message {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .94);
+    color: red;
+    font-size: clamp(24px, 7vw, 48px);
+    font-weight: 1000;
+    letter-spacing: 4px;
+    text-align: center;
+    text-shadow: 0 0 10px red, 0 0 30px red;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    padding: 25px;
+}
+
+.click-message.active {
+    visibility: visible;
+    animation: messageAppear 4s forwards;
+}
+
+@keyframes messageAppear {
+    0% { opacity: 0; transform: scale(1.5); }
+    10%, 75% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(.8); }
+}
+
+body.clicked {
+    animation: screenShake .12s infinite;
+}
+
+body.clicked .graph-wrapper {
+    animation: graphPanic .15s infinite alternate;
+}
+
+body.clicked line {
+    animation-duration: .15s;
+    stroke-width: 3;
+}
+
+@keyframes screenShake {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(2px, -2px); }
+    50% { transform: translate(-2px, 2px); }
+    75% { transform: translate(2px, 1px); }
+    100% { transform: translate(-1px, -2px); }
+}
+
+@keyframes graphPanic {
+    from { transform: skewX(-2deg) scale(1.01); }
+    to { transform: skewX(2deg) scale(.99); }
+}
+
+.flash {
+    position: fixed;
+    inset: 0;
+    background: red;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 20;
+    animation: flash 8s infinite;
+}
+
+@keyframes flash {
+    0%, 94%, 96%, 100% { opacity: 0; }
+    95% { opacity: .08; }
+}
+
+@media (max-width: 400px) {
+    h1 { font-size: 27px; }
+    .background span { font-size: 30px; }
+    .speech { font-size: 13px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="flash"></div>
+
+<div class="click-message" id="clickMessage">
+    YOU SHOULD NOT HAVE CLICKED
+</div>
+
+<div class="intro">
+    <div class="scene">
+        <div class="scene-title">AN ORDINARY DAY...</div>
+
+        <div class="characters">
+            <div class="character boy">👨</div>
+            <div class="character girl">👩</div>
+        </div>
+
+        <div class="dialogue">
+            <div class="speech boy-speech">
+                Hey, would you like to go on a date with me?
+            </div>
+
+            <div class="speech girl-speech">
+                Sorry... I only date 6 foot 5 Chads.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="background">
+    <div class="background-row"><span>BRUTAL</span><span>TFD</span><span>TFR</span><span>JBG</span><span>DNR</span></div>
+    <div class="background-row"><span>DNR</span><span>BRUTAL</span><span>TFD</span><span>TFR</span><span>JBG</span></div>
+    <div class="background-row"><span>TFD</span><span>TFR</span><span>JBG</span><span>DNR</span><span>BRUTAL</span></div>
+    <div class="background-row"><span>JBG</span><span>DNR</span><span>BRUTAL</span><span>TFD</span><span>TFR</span></div>
+    <div class="background-row"><span>TFR</span><span>JBG</span><span>DNR</span><span>BRUTAL</span><span>TFD</span></div>
+    <div class="background-row"><span>BRUTAL</span><span>TFD</span><span>TFR</span><span>JBG</span><span>DNR</span></div>
+    <div class="background-row"><span>DNR</span><span>BRUTAL</span><span>TFD</span><span>TFR</span><span>JBG</span></div>
+    <div class="background-row"><span>TFD</span><span>TFR</span><span>JBG</span><span>DNR</span><span>BRUTAL</span></div>
+    <div class="background-row"><span>JBG</span><span>DNR</span><span>BRUTAL</span><span>TFD</span><span>TFR</span></div>
+    <div class="background-row"><span>TFR</span><span>JBG</span><span>DNR</span><span>BRUTAL</span><span>TFD</span></div>
+</div>
+
+<div class="container">
+
+    <h1>BRUTAL GRAPH</h1>
+
+    <div class="subtitle">
+        EVERY MAN IS A VICTIM OF HYPERGAMY
+    </div>
+
+    <div class="graph-wrapper" id="graph">
+        <svg viewBox="0 0 380 550" id="graphSvg">
+            <defs>
+                <marker id="arrow" markerWidth="8" markerHeight="8"
+                    refX="6" refY="3" orient="auto">
+                    <path d="M0 0 L6 3 L0 6"
+                        fill="none" stroke="#ff1616" stroke-width="1.5"/>
+                </marker>
+
+                <g id="woman" fill="#ff368d">
+                    <circle cy="-9" r="4"/>
+                    <path d="M-5 -3 L5 -3 L8 7 L5 7 L4 1 L4 13 L1 13 L0 5 L-1 13 L-4 13 L-4 1 L-5 7 L-8 7Z"/>
+                </g>
+
+                <g id="man" fill="#00bfff">
+                    <circle cy="-9" r="4"/>
+                    <path d="M-5 -3 L5 -3 L7 8 L4 8 L3 1 L3 13 L-1 13 L0 5 L-2 13 L-5 13 L-4 1 L-7 8Z"/>
+                </g>
+            </defs>
+        </svg>
+    </div>
+
+    <div class="legend">
+        <span class="women-label">WOMEN</span>
+        <span class="men-label">MEN</span>
+    </div>
+
+    <div class="warning">THE GRAPH NEVER SLEEPS</div>
+
+</div>
+
+<script>
+const svg = document.getElementById("graphSvg");
+const NS = "http://www.w3.org/2000/svg";
+
+const count = 11;
+const startY = 20;
+const spacing = 48;
+
+const linesGroup = document.createElementNS(NS, "g");
+linesGroup.setAttribute("id", "linesGroup");
+svg.appendChild(linesGroup);
+
+for (let woman = 0; woman < count; woman++) {
+    const line = document.createElementNS(NS, "line");
+    line.setAttribute("x1", 40);
+    line.setAttribute("y1", startY + woman * spacing);
+    line.setAttribute("x2", 335);
+    line.setAttribute("y2", startY + woman * spacing);
+    line.setAttribute("data-woman", woman);
+    linesGroup.appendChild(line);
+}
+
+for (let i = 0; i < count; i++) {
+    const female = document.createElementNS(NS, "use");
+    female.setAttribute("href", "#woman");
+    female.setAttribute("x", 25);
+    female.setAttribute("y", startY + i * spacing);
+    female.setAttribute("class", "people");
+
+    const male = document.createElementNS(NS, "use");
+    male.setAttribute("href", "#man");
+    male.setAttribute("x", 355);
+    male.setAttribute("y", startY + i * spacing);
+    male.setAttribute("class", "people");
+
+    [female, male].forEach(person => {
+        const duration = 2.5 + Math.random() * 3;
+        const delay = Math.random() * -5;
+        const direction = Math.random() > .5 ? 1 : -1;
+        const distance = .5 + Math.random() * 1.5;
+        const rotation = direction * (.5 + Math.random());
+
+        person.style.animationDuration = duration + "s";
+        person.style.animationDelay = delay + "s";
+        person.style.setProperty("--distance", direction * distance + "px");
+        person.style.setProperty("--rotation", rotation + "deg");
+
+        svg.appendChild(person);
+    });
+}
+
+const graph = document.getElementById("graph");
+const message = document.getElementById("clickMessage");
+
+let clicked = false;
+
+graph.addEventListener("click", () => {
+    if (clicked) return;
+
+    clicked = true;
+
+    linesGroup.innerHTML = "";
+
+    for (let woman = 0; woman < count; woman++) {
+        const targets = woman < 3 ? [0] : [0, 1, 2];
+
+        for (const man of targets) {
+            const line = document.createElementNS(NS, "line");
+            line.setAttribute("x1", 40);
+            line.setAttribute("y1", startY + woman * spacing);
+            line.setAttribute("x2", 335);
+            line.setAttribute("y2", startY + man * spacing);
+            linesGroup.appendChild(line);
+        }
+    }
+
+    document.body.classList.add("clicked");
+    message.classList.add("active");
+
+    setTimeout(() => {
+        document.body.classList.remove("clicked");
+    }, 4000);
+
+    setTimeout(() => {
+        message.classList.remove("active");
+    }, 4500);
+});
+</script>
+
+</body>
+</html>
